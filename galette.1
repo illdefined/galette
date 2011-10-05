@@ -1,0 +1,29 @@
+.Dd October 5, 2011
+.Dt GALETTE 1
+.Os
+.Sh NAME
+.Nm galette
+.Nd hardening compiler wrapper
+.Sh SYNOPSIS
+.Nm galette
+.Aq compiler
+.Bk
+.Op Ar option ...
+.Ek
+.Nm galette- Ns Aq compiler
+.Bk
+.Op Ar option ...
+.Ek
+.Sh DESCRIPTION
+.Nm
+wraps a GCC-compatible C or C++ compiler to automatically enable certain security features.
+.Pp
+Unless overridden by corresponding
+.Xr gcc 1
+switches, it invokes
+.Va compiler
+with appropriate hardening flags to generate position-independent code with stack-smashing protection and compile-time buffer checks, passing all the arguments given on the command-line.
+.Sh SEE ALSO
+.Xr gcc 1
+.Sh AUTHORS
+.An "Mikael Voss" Aq mikael+galette@illdefined.org
