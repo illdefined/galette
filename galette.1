@@ -23,6 +23,24 @@ Unless overridden by corresponding
 switches, it invokes
 .Va compiler
 with appropriate hardening flags to generate position-independent code with stack-smashing protection and compile-time buffer checks, passing all the arguments given on the command-line.
+.Sh IMPLEMENTATION NOTES
+.Ss Stack-smashing protection
+By default, stack-smashing protection is enabled for all functions, but this behaviour can be modified with
+.Fl fstack-protector
+or
+.Fl fno-stack-protector .
+.Ss Buffer overflow checks
+Unless the
+.Dv _FORTIFY_SOURCE
+macro is specified or undefined on the command-line, it is set to 2 and code optimisation is activated, enabling compile- and run-time buffer overflow checks.
+.Ss Position-independent code
+.Nm
+attempts to differentiate between shared library and executable builds based on command-line options and generate position-independent code accordingly.
+This should work transparently in most cases, but might break some library builds and can be changed with the
+.Fl fno-PIE
+and
+.Fl fno-PIC
+switches.
 .Sh SEE ALSO
 .Xr gcc 1
 .Sh AUTHORS
