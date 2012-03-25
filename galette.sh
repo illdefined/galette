@@ -25,6 +25,8 @@ now=1
 for arg in "$@"
 do
 	case "$arg" in
+	(-c)
+		unset combreloc relro now;;
 	(-fstack-protector|-fstack-protector-all|-fno-stack-protector|-fno-stack-protector-all)
 		unset ssp;;
 	(-D_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*|-U_FORTIFY_SOURCE)
