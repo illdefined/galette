@@ -12,6 +12,11 @@ else
 	bin="${self#galette-}"
 fi
 
+if [ "$bin" = "$self" ]
+then
+	exit 1
+fi
+
 if [ "${bin%++}" = "clang" ]
 then
 	clang=1
