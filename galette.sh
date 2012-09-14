@@ -12,7 +12,7 @@ else
 	bin="${self#galette-}"
 fi
 
-if [ "${bin%++}" == "clang" ]
+if [ "${bin%++}" = "clang" ]
 then
 	clang=1
 else
