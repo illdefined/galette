@@ -39,9 +39,9 @@ do
 		unset ssp;;
 	(-D_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*|-U_FORTIFY_SOURCE)
 		unset fortify;;
-	(-fPIC|-fpic|-fPIE|-fpie|-fno-PIC|-fno-pic|-static|-i|-r|-Wl,-pie|-pie)
+	(-fPIC|-fpic|-fPIE|-fpie|-fno-PIC|-fno-pic|-static|-Bstatic|-i|-r|-Wl,-pie|-pie|-nostdlib|-nostartfiles|-D__KERNEL__)
 		unset pic pie;;
-	(-fno-PIE|-fno-pie|-shared|-nopie)
+	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
 		unset pie;;
 	(-Wl,-z,combreloc|-Wl,-z,nocombreloc)
 		unset comreloc;;
