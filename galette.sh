@@ -71,7 +71,7 @@ exec "$bin" \
 	${ssp:+-fstack-protector-strong} \
 	${fortify:+-D_FORTIFY_SOURCE=2 -O} \
 	${pic:+-fPIC} \
-	${pie:+-fPIE${clang:+${link:+ -Wl,-pie}}${gcc:+ -pie}} \
+	${pie:+-fPIE${link:+ -pie}} \
 	${link:+${combreloc:+-Wl,-z,combreloc}} \
 	${link:+${relro:+-Wl,-z,relro}} \
 	${link:+${now:+-Wl,-z,now}} \
