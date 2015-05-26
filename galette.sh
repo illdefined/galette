@@ -40,7 +40,7 @@ do
 	case "$arg" in
 	(-c)
 		unset link;;
-	(-fstack-protector|-fstack-protector-all|-fno-stack-protector|-fno-stack-protector-all)
+	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
 		unset ssp;;
 	(-D_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*|-U_FORTIFY_SOURCE)
 		unset fortify;;
