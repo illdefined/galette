@@ -70,7 +70,7 @@ do
 done
 
 # No PIC if PIE
-[ $pie ] && unset pic
+[ -n "${pie+x}" ] && unset pic
 
 # Launch the compiler binary
 exec "$bin" \
