@@ -26,6 +26,7 @@ fi
 
 # Enable flags
 link=1
+lto=1
 fortify=1
 ssp=1
 pic=1
@@ -40,6 +41,8 @@ do
 	case "$arg" in
 	(-c)
 		unset link;;
+	(-flto|-flto=*|-fno-lto)
+		unset lto;;
 	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
 		unset ssp;;
 	(-[DU]_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*)
@@ -64,6 +67,7 @@ done
 
 # Launch the compiler binary
 exec "$bin" \
+	${lto:+-flto -ffat-lto-objects} \
 	${ssp:+-fstack-protector-strong} \
 	${fortify:+-D_FORTIFY_SOURCE=2 -O} \
 	${pic:+-fPIC} \
