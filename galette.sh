@@ -29,6 +29,7 @@ link=1
 lto=1
 fortify=1
 ssp=1
+wrap=1
 pic=1
 pie=1
 combreloc=1
@@ -45,6 +46,8 @@ do
 		unset lto;;
 	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
 		unset ssp;;
+	(-f[tw]rapv|-fno-[tw]rapv)
+		unset wrap;;
 	(-[DU]_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*)
 		unset fortify;;
 	(-fPI[CE]|-fpi[ce]|-fno-PIC|-fno-pic|-static|-Bstatic|-[ir]|-Wl,-pie|-pie|-nostdlib|-nostartfiles|-D__KERNEL__)
@@ -69,6 +72,7 @@ done
 exec "$bin" \
 	${lto:+${gcc:+-flto -ffat-lto-objects}} \
 	${ssp:+-fstack-protector-strong} \
+	${wrap:+-ftrapv} \
 	${fortify:+-D_FORTIFY_SOURCE=2 -O} \
 	${pic:+-fPIC} \
 	${pie:+-fPIE${link:+ -pie}} \
