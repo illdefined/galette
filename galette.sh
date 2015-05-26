@@ -2,6 +2,9 @@
 
 set -e
 
+# Enable tracing
+[ -n "${GALETTE_TRACE+x}" ] && set -x
+
 self="$(basename "$0")"
 
 if [ "$self" = "galette" ]
