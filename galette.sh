@@ -64,7 +64,7 @@ done
 
 # Launch the compiler binary
 exec "$bin" \
-	${ssp:+-fstack-protector-all} \
+	${ssp:+-fstack-protector-strong} \
 	${fortify:+-D_FORTIFY_SOURCE=2 -O} \
 	${pic:+-fPIC} \
 	${pie:+-fPIE${clang:+${link:+ -Wl,-pie}}${gcc:+ -pie}} \
