@@ -67,7 +67,7 @@ done
 
 # Launch the compiler binary
 exec "$bin" \
-	${lto:+-flto -ffat-lto-objects} \
+	${lto:+${gcc:+-flto -ffat-lto-objects}} \
 	${ssp:+-fstack-protector-strong} \
 	${fortify:+-D_FORTIFY_SOURCE=2 -O} \
 	${pic:+-fPIC} \
