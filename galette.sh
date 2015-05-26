@@ -74,14 +74,14 @@ done
 
 # Launch the compiler binary
 exec "$bin" \
-	${warn:+-Wformat -Wformat-security -Werror=nonnull -Werror=init-self -Werror=sequence-point -Werror=uninitialized -Wstrict-overflow=4 -Werror=array-bounds -Wfloat-equal -Wshadow -Wtype-limits -Wcast-align -Wwrite-strings -Wconversion -Wsign-compare -Wsizeof-pointer-memaccess -Waddress -Wredundant-decls -Wvolatile-register-var -Wpointer-sign -Wstack-protector${gcc+ -Wmaybe-uninitialized -Wtrampolines -Wstack-usage=64 -Wclobbered -Werror=jump-misses-init -Wlogical-op}} \
-	${fortify:+-D_FORTIFY_SOURCE=2 -O} \
-	${lto:+${gcc:+-flto -ffat-lto-objects}} \
-	${ssp:+-fstack-protector-strong} \
-	${wrap:+-ftrapv} \
-	${pic:+-fPIC} \
-	${pie:+-fPIE${link:+ -pie}} \
-	${link:+${combreloc:+-Wl,-z,combreloc}} \
-	${link:+${relro:+-Wl,-z,relro}} \
-	${link:+${now:+-Wl,-z,now}} \
+	${warn+-Wformat -Wformat-security -Werror=nonnull -Werror=init-self -Werror=sequence-point -Werror=uninitialized -Wstrict-overflow=4 -Werror=array-bounds -Wfloat-equal -Wshadow -Wtype-limits -Wcast-align -Wwrite-strings -Wconversion -Wsign-compare -Wsizeof-pointer-memaccess -Waddress -Wredundant-decls -Wvolatile-register-var -Wpointer-sign -Wstack-protector${gcc+ -Wmaybe-uninitialized -Wtrampolines -Wstack-usage=64 -Wclobbered -Werror=jump-misses-init -Wlogical-op}} \
+	${fortify+-D_FORTIFY_SOURCE=2 -O} \
+	${lto+${gcc+-flto -ffat-lto-objects}} \
+	${ssp+-fstack-protector-strong} \
+	${wrap+-ftrapv} \
+	${pic+-fPIC} \
+	${pie+-fPIE${link+ -pie}} \
+	${link+${combreloc+-Wl,-z,combreloc}} \
+	${link+${relro+-Wl,-z,relro}} \
+	${link+${now+-Wl,-z,now}} \
 	"$@"
