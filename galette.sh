@@ -26,8 +26,8 @@ fi
 
 # Enable flags
 link=1
-lto=1
 fortify=1
+lto=1
 ssp=1
 wrap=1
 pic=1
@@ -42,14 +42,14 @@ do
 	case "$arg" in
 	(-c)
 		unset link;;
+	(-[DU]_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*)
+		unset fortify;;
 	(-flto|-flto=*|-fno-lto)
 		unset lto;;
 	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
 		unset ssp;;
 	(-f[tw]rapv|-fno-[tw]rapv)
 		unset wrap;;
-	(-[DU]_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*)
-		unset fortify;;
 	(-fPI[CE]|-fpi[ce]|-fno-PIC|-fno-pic|-static|-Bstatic|-[ir]|-Wl,-pie|-pie|-nostdlib|-nostartfiles|-D__KERNEL__)
 		unset pic pie;;
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
@@ -70,10 +70,10 @@ done
 
 # Launch the compiler binary
 exec "$bin" \
+	${fortify:+-D_FORTIFY_SOURCE=2 -O} \
 	${lto:+${gcc:+-flto -ffat-lto-objects}} \
 	${ssp:+-fstack-protector-strong} \
 	${wrap:+-ftrapv} \
-	${fortify:+-D_FORTIFY_SOURCE=2 -O} \
 	${pic:+-fPIC} \
 	${pie:+-fPIE${link:+ -pie}} \
 	${link:+${combreloc:+-Wl,-z,combreloc}} \
