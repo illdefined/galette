@@ -120,6 +120,7 @@ exec "$binp" \
 		-Wstack-protector \
 		${gcc+ \
 			-Wmaybe-uninitialized \
+			-Wno-error=maybe-uninitialized \
 			-Wtrampolines \
 			-Wstack-usage=64 \
 			-Wclobbered \
