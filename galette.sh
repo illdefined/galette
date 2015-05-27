@@ -112,7 +112,7 @@ exec "$binp" \
 		-Werror=nonnull \
 		-Werror=init-self \
 		-Werror=sequence-point \
-		-Werror=uninitialized \
+		-Wuninitialized \
 		-Wstrict-overflow=4 \
 		-Werror=array-bounds \
 		-Wfloat-equal \
@@ -130,7 +130,6 @@ exec "$binp" \
 		-Wstack-protector \
 		${gcc+ \
 			-Wmaybe-uninitialized \
-			-Wno-error=maybe-uninitialized \
 			-Wtrampolines \
 			-Wclobbered \
 			-Wlogical-op}} \
