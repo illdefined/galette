@@ -122,7 +122,6 @@ exec "$binp" \
 			-Wmaybe-uninitialized \
 			-Wno-error=maybe-uninitialized \
 			-Wtrampolines \
-			-Wstack-usage=64 \
 			-Wclobbered \
 			-Werror=jump-misses-init \
 			-Wlogical-op}} \
