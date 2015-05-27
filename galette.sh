@@ -51,7 +51,7 @@ do
 		unset ssp;;
 	(-f[tw]rapv|-fno-[tw]rapv)
 		unset wrap;;
-	(-fPI[CE]|-fpi[ce]|-fno-PIC|-fno-pic|-static|-Bstatic|-[ir]|-Wl,-pie|-pie|-nostdlib|-nostartfiles|-D__KERNEL__)
+	(-fPI[CE]|-fpi[ce]|-fno-PIC|-fno-pic|-static|-Bstatic|-[ir]|-Wl,-pie|-pie)
 		unset pic pie;;
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
 		unset pie;;
