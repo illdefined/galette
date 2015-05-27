@@ -125,7 +125,6 @@ exec "$binp" \
 			-Wno-error=maybe-uninitialized \
 			-Wtrampolines \
 			-Wclobbered \
-			-Werror=jump-misses-init \
 			-Wlogical-op}} \
 	${fortify+ \
 		-D_FORTIFY_SOURCE=2 -O} \
