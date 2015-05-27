@@ -58,6 +58,7 @@ ssp=1
 wrap=1
 pic=1
 pie=1
+libgcc=1
 combreloc=1
 relro=1
 now=1
@@ -82,6 +83,10 @@ do
 		unset pic pie;;
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
 		unset pie;;
+	(-nodefaultlibs|-nostdlib)
+		unset libgcc;;
+	(-lgcc)
+		libgcc=1;;
 	(-Wl,-z,combreloc|-Wl,-z,nocombreloc)
 		unset combreloc;;
 	(-Wl,-z,relro|-Wl,-z,norelro)
@@ -95,6 +100,9 @@ done
 
 # No PIC if PIE
 [ -n "${pie+x}" ] && unset pic
+
+# Certain functions may require libgcc
+[ -z "${libgcc+x}" ] && unset fortify ssp wrap
 
 # Launch the compiler binary
 exec "$binp" \
