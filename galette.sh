@@ -81,7 +81,7 @@ do
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
 		unset pie;;
 	(-Wl,-z,combreloc|-Wl,-z,nocombreloc)
-		unset comreloc;;
+		unset combreloc;;
 	(-Wl,-z,relro|-Wl,-z,norelro)
 		unset relro;;
 	(-Wl,-z,lazy|-Wl,-z,now)
