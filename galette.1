@@ -5,34 +5,52 @@
 .Nm galette
 .Nd hardening compiler wrapper
 .Sh SYNOPSIS
-.Nm galette
-.Aq compiler
-.Bk
+.Nm galette \fIcompiler\fR
+.Bk -words
 .Op Ar option ...
 .Ek
-.Nm galette- Ns Aq compiler
-.Bk
+.Nm galette-\fIcompiler\fR
+.Bk -words
+.Op Ar option ...
+.Ek
+.Nm \fIcompiler\fR
+.Bk -words
 .Op Ar option ...
 .Ek
 .Sh DESCRIPTION
 .Nm
 wraps a GCC-compatible C or C++ compiler to automatically enable certain security features.
 .Pp
-Unless overridden by corresponding
-.Xr gcc 1
-switches, it invokes
+It invokes
 .Va compiler
-with appropriate hardening flags to generate position-independent code with stack-smashing protection and compile-time buffer checks, passing all the arguments given on the command-line.
+with appropriate hardening flags, unless overridden by corresponding
+.Xr gcc 1
+switches.
 .Sh IMPLEMENTATION NOTES
-.Ss Stack-smashing protection
-By default, stack-smashing protection is enabled for all functions, but this behaviour can be modified with
-.Fl fstack-protector
-or
-.Fl fno-stack-protector .
+.Ss Extra warnings
+Warnings about constructions that may represent security issues are enabled and warnings about undefined behaviour are treated as hard errors.
 .Ss Buffer overflow checks
 Unless the
 .Dv _FORTIFY_SOURCE
 macro is specified or undefined on the command-line, it is set to 2 and code optimisation is activated, enabling compile- and run-time buffer overflow checks.
+.Ss Link-time optimisation
+The compiler is instructed to generate GIMPLE bytecode along the usual machine code to enable link-time optimisation. This is not strictly a security feature and may be disabled with the
+.Fl fno-lto
+switch
+.Ss Stack-smashing protection
+Stack-smashing protection is enabled for potentially vulnerable functions
+.Po
+i.e. those containing local array definitions or references to local frame addresses
+.Pc . This behaviour can be modified with
+.Fl fno-stack-protector
+or any other SSP switch.
+.Ss Signed integer overflow
+Traps for signed integer overflow are generated unless overridden by any of
+.Fl ftrapv ,
+.Fl fno-trapv ,
+.Fl fwrapv ,
+or
+.Fl fno-wrapv .
 .Ss Position-independent code
 .Nm
 attempts to differentiate between shared library and executable builds based on command-line options and generate position-independent code accordingly.
@@ -41,7 +59,25 @@ This should work transparently in most cases, but might break some library build
 and
 .Fl fno-PIC
 switches.
+.Ss Dynamic linking
+Various flags are passed to the linker allowing the global offset table 
+.Pq GOT
+to be marked read-only
+.Po
+.Fl z,relro
+and
+.Fl z,now
+.Pc
+and making dynamic symbol lookup caching possible
+.Pq Fl z,combreloc .
+These may be overriden by the corresponding linker flags
+.Po
+.Fl z,norelro ,
+.Fl z,lazy
+and
+.Fl z,nocombreloc
+.Pc .
 .Sh SEE ALSO
 .Xr gcc 1
 .Sh AUTHORS
-.An "Mikael Voss" Aq mikael+galette@illdefined.org
+.An "Mikael Voss" Aq mvs@nyantec.com
