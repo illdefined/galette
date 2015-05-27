@@ -2,7 +2,7 @@
 
 set -e
 
-self="$(basename "$0")"
+self="${0##*/}"
 
 if [ "$self" = "galette" ]
 then
@@ -12,9 +12,34 @@ else
 	bin="${self#galette-}"
 fi
 
-if [ "$bin" = "$self" ]
+# Determine canonical binary path
+selfp="$(readlink -f "$0")"
+
+# Search for compiler binary in PATH
+comp=""
+list="$PATH"
+
+until [ "$list" = "$comp" ] || [ -n "$binp" ]
+do
+	# Split search path component off
+	comp="${list%%:*}"
+	list="${list#*:}"
+
+	if [ -x "$comp/$bin" ]
+	then
+		binp="$(readlink -f "$comp/$bin")"
+
+		if [ "$binp" = "$selfp" ]
+		then
+			unset binp
+		fi
+	fi
+done
+
+if [ -z "$binp" ]
 then
-	exit 1
+	# No compiler binary found
+	exit 127
 fi
 
 if [ "${bin%++}" = "clang" ]
@@ -70,7 +95,7 @@ done
 [ -n "${pie+x}" ] && unset pic
 
 # Launch the compiler binary
-exec "$bin" \
+exec "$binp" \
 	${warn+ \
 		-Wformat \
 		-Wformat-security \
