@@ -73,7 +73,7 @@ do
 		unset warn;;
 	(-[DU]_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*)
 		unset fortify;;
-	(-flto|-flto=*|-fno-lto)
+	(-flto|-flto=*|-fno-lto|-nostartfiles)
 		unset lto;;
 	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
 		unset ssp;;
