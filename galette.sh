@@ -68,6 +68,8 @@ do
 	case "$arg" in
 	(-c)
 		unset link;;
+	(-Werror)
+		unset warn;;
 	(-[DU]_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*)
 		unset fortify;;
 	(-flto|-flto=*|-fno-lto)
