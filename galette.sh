@@ -114,7 +114,6 @@ exec "$binp" \
 		-Werror=sequence-point \
 		-Werror=uninitialized \
 		-Wstrict-overflow=4 \
-		-Werror=array-bounds \
 		-Wfloat-equal \
 		-Wshadow \
 		-Wtype-limits \
