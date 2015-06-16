@@ -120,6 +120,7 @@ exec "$binp" \
 		-Wcast-align \
 		-Wwrite-strings \
 		-Wconversion \
+		-Wno-sign-conversion \
 		-Wsign-compare \
 		-Wsizeof-pointer-memaccess \
 		-Waddress \
