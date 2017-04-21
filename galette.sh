@@ -52,6 +52,7 @@ fi
 # Enable flags
 link=1
 warn=1
+error=1
 fortify=1
 lto=1
 ssp=1
@@ -72,6 +73,8 @@ do
 		unset link;;
 	(-Werror)
 		unset warn;;
+	(conftest.c)
+		unset error;;
 	(-[DU]_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*)
 		unset fortify;;
 	(-flto|-flto=*|-fno-lto)
@@ -112,10 +115,6 @@ exec "$binp" \
 	${warn+ \
 		-Wformat \
 		-Wformat-security \
-		-Werror=nonnull \
-		-Werror=init-self \
-		-Werror=sequence-point \
-		-Werror=uninitialized \
 		-Wstrict-overflow=4 \
 		-Wfloat-equal \
 		-Wshadow \
@@ -131,6 +130,11 @@ exec "$binp" \
 		-Wvolatile-register-var \
 		-Wpointer-sign \
 		-Wstack-protector \
+		${error+ \
+			-Werror=nonnull \
+			-Werror=init-self \
+			-Werror=sequence-point \
+			-Werror=uninitialized} \
 		${gcc+ \
 			-Wmaybe-uninitialized \
 			-Wno-error=maybe-uninitialized \
