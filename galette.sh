@@ -62,6 +62,7 @@ libgcc=1
 combreloc=1
 relro=1
 now=1
+hashstyle=1
 
 # Process command-line arguments
 for arg in "$@"
@@ -93,6 +94,8 @@ do
 		unset relro;;
 	(-Wl,-z,lazy|-Wl,-z,now)
 		unset now;;
+	(-Wl,--hash-style=*)
+		unset hashstyle;;
 	(--)
 		break;;
 	esac
@@ -155,5 +158,7 @@ exec "$binp" \
 		${relro+ \
 			-Wl,-z,relro} \
 		${now+ \
-			-Wl,-z,now}} \
+			-Wl,-z,now} \
+		${hashstyle+ \
+			-Wl,--hash-style=gnu}} \
 	"$@"
