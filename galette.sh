@@ -118,7 +118,6 @@ exec "$binp" \
 		-Wtype-limits \
 		-Wcast-align \
 		-Wwrite-strings \
-		-Wconversion \
 		-Wno-sign-conversion \
 		-Wsign-compare \
 		-Wsizeof-pointer-memaccess \
