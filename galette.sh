@@ -114,7 +114,6 @@ exec "$binp" \
 		-Wformat-security \
 		-Wstrict-overflow=4 \
 		-Wfloat-equal \
-		-Wshadow \
 		-Wtype-limits \
 		-Wcast-align \
 		-Wwrite-strings \
