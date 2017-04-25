@@ -125,7 +125,6 @@ exec "$binp" \
 		-Waddress \
 		-Wredundant-decls \
 		-Wvolatile-register-var \
-		-Wpointer-sign \
 		-Wstack-protector \
 		-Werror=init-self \
 		-Werror=sequence-point \
