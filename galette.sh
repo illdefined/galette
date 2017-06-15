@@ -82,7 +82,7 @@ do
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
 		unset pie;;
 	(-nodefaultlibs|-nostdlib)
-		unset libgcc;;
+		unset libgcc lto;;
 	(-lgcc)
 		libgcc=1;;
 	(-Wl,-z,combreloc|-Wl,-z,nocombreloc)
