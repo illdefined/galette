@@ -55,7 +55,6 @@ warn=1
 fortify=1
 lto=1
 ssp=1
-wrap=1
 pic=1
 pie=1
 libgcc=1
@@ -78,8 +77,6 @@ do
 		unset lto;;
 	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
 		unset ssp;;
-	(-f[tw]rapv|-fno-[tw]rapv)
-		unset wrap;;
 	(-fPI[CE]|-fpi[ce]|-fno-PIC|-fno-pic|-rdynamic|-static|-Bstatic|-[ir]|-Wl,-pie|-pie)
 		unset pic pie;;
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
@@ -139,8 +136,6 @@ exec "$binp" \
 			-flto -ffat-lto-objects}} \
 	${ssp+ \
 		-fstack-protector-strong} \
-	${wrap+ \
-		-ftrapv} \
 	${pic+ \
 		-fPIC} \
 	${pie+ \
