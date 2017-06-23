@@ -110,7 +110,7 @@ exec "$binp" \
 		-Wformat \
 		-Wformat-security \
 		-Werror=format-security \
-		-Wunititialised \
+		-Wuninitialized \
 		-Winit-self \
 		-Werror=init-self \
 		-Wsequence-point \
