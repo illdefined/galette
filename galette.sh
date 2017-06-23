@@ -109,26 +109,12 @@ exec "$binp" \
 	${warn+ \
 		-Wformat \
 		-Wformat-security \
-		-Wstrict-overflow=4 \
-		-Wfloat-equal \
-		-Wtype-limits \
-		-Wcast-align \
-		-Wwrite-strings \
-		-Wno-sign-conversion \
-		-Wsign-compare \
-		-Wsizeof-pointer-memaccess \
-		-Waddress \
-		-Wredundant-decls \
-		-Wvolatile-register-var \
-		-Wstack-protector \
+		-Werror=format-security \
+		-Wunititialised \
+		-Winit-self \
 		-Werror=init-self \
+		-Wsequence-point \
 		-Werror=sequence-point \
-		${gcc+ \
-			-Wmaybe-uninitialized \
-			-Wno-error=maybe-uninitialized \
-			-Wtrampolines \
-			-Wclobbered \
-			-Wlogical-op}} \
 	${fortify+ \
 		-D_FORTIFY_SOURCE=2 -O} \
 	${check+ \
