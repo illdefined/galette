@@ -54,6 +54,7 @@ link=1
 warn=1
 fortify=1
 lto=1
+check=1
 ssp=1
 pic=1
 pie=1
@@ -75,6 +76,8 @@ do
 		unset fortify;;
 	(-flto|-flto=*|-fno-lto)
 		unset lto;;
+	(-fstack-check|-fstack-check=*)
+		unset check;;
 	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
 		unset ssp;;
 	(-fPI[CE]|-fpi[ce]|-fno-PIC|-fno-pic|-rdynamic|-static|-Bstatic|-[ir]|-Wl,-pie|-pie)
@@ -134,6 +137,8 @@ exec "$binp" \
 	${lto+ \
 		${gcc+ \
 			-flto -ffat-lto-objects}} \
+	${check+ \
+		-fstack-check} \
 	${ssp+ \
 		-fstack-protector-strong} \
 	${pic+ \
