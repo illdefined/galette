@@ -114,7 +114,7 @@ exec "$binp" \
 		-Winit-self \
 		-Werror=init-self \
 		-Wsequence-point \
-		-Werror=sequence-point \
+		-Werror=sequence-point} \
 	${fortify+ \
 		-D_FORTIFY_SOURCE=2 -O} \
 	${check+ \
