@@ -53,7 +53,6 @@ fi
 link=1
 warn=1
 fortify=1
-lto=1
 check=1
 ssp=1
 pic=1
@@ -74,8 +73,6 @@ do
 		unset warn;;
 	(-[DU]_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*)
 		unset fortify;;
-	(-flto|-flto=*|-fno-lto)
-		unset lto;;
 	(-fstack-check|-fstack-check=*)
 		unset check;;
 	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
@@ -85,7 +82,7 @@ do
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
 		unset pie;;
 	(-nodefaultlibs|-nostdlib)
-		unset libgcc lto;;
+		unset libgcc;;
 	(-lgcc)
 		libgcc=1;;
 	(-Wl,-z,combreloc|-Wl,-z,nocombreloc)
@@ -134,9 +131,6 @@ exec "$binp" \
 			-Wlogical-op}} \
 	${fortify+ \
 		-D_FORTIFY_SOURCE=2 -O} \
-	${lto+ \
-		${gcc+ \
-			-flto -ffat-lto-objects}} \
 	${check+ \
 		-fstack-check} \
 	${ssp+ \
