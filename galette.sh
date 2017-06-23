@@ -81,7 +81,7 @@ do
 		unset pic pie;;
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
 		unset pie;;
-	(-nodefaultlibs|-nostdlib)
+	(-ffreestanding|-fno-hosted|-nodefaultlibs|-nostdlib)
 		unset libgcc;;
 	(-lgcc)
 		libgcc=1;;
