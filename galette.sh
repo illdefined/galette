@@ -42,13 +42,6 @@ then
 	exit 127
 fi
 
-if [ "${bin%++}" = "clang" ]
-then
-	clang=1
-else
-	gcc=1
-fi
-
 # Enable flags
 link=1
 warn=1
