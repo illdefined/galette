@@ -75,7 +75,7 @@ then
 	printf "compiler='%s';target='%s'" "${compiler//\'/\'\'}" "${target//\'/\'\'}" >"$binpc"
 fi
 
-# Enable flags
+# Default flags
 link=1
 warn=1
 fortify=1
@@ -89,6 +89,28 @@ combreloc=1
 relro=1
 now=1
 hashstyle=1
+
+# Retrieve flags from environment
+comp=""
+list="$GALETTE_FLAGS"
+
+until [ "$comp" = "$list" ]
+do
+	comp="${list%% *}"
+	list="${list#* }"
+
+	case "${comp#[+-]}" in
+		(fortify|pic|pie)
+			var="${comp#[+-]}"
+			var="${var//-/_}"
+			if [ "${comp%${var}}" = "-" ]
+			then
+				unset $var
+			else
+				eval $var=
+			fi;;
+	esac
+done
 
 # Process command-line arguments
 for arg in "$@"
