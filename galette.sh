@@ -42,6 +42,39 @@ then
 	exit 127
 fi
 
+# Read cache
+if [ -n "${XDG_RUNTIME_DIR}" ]
+then
+	cdir="${XDG_RUNTIME_DIR}/galette/cache"
+	mkdir -p -m 0700 "$cdir"
+
+	binpc="${binp//%/%25}"
+	binpc="$cdir/${binpc////%2f}"
+
+	if [ -f "$binpc" ]
+	then
+		. "$binpc"
+	fi
+fi
+
+# Determine compiler and target
+if [ -z "$compiler" ]
+then
+	compiler="$("$binp" -### -E 2>&1 | grep -E '^(clang|gcc) version')"
+	compiler="${compiler% version*}"
+fi
+
+if [ -z "$target" ]
+then
+	target="$("$binp" -dumpmachine)"
+fi
+
+# Cache results
+if [ -n "$binpc" -a ! -f "$binpc" ]
+then
+	printf "compiler='%s';target='%s'" "${compiler//\'/\'\'}" "${target//\'/\'\'}" >"$binpc"
+fi
+
 # Enable flags
 link=1
 warn=1
