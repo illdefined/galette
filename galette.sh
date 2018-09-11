@@ -85,7 +85,7 @@ do
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
 		unset pie;;
 	(-ffreestanding|-fno-hosted|-nodefaultlibs|-nostdlib)
-		unset sanitise libgcc;;
+		unset libgcc;;
 	(-lgcc)
 		libgcc=1;;
 	(-Wl,-z,combreloc|-Wl,-z,nocombreloc)
@@ -122,7 +122,8 @@ exec "$binp" \
 		-D_FORTIFY_SOURCE=2 -O} \
 	${sanitise+ \
 		-fsanitize=signed-integer-overflow,object-size \
-		-fno-sanitize-recover=signed-integer-overflow,object-size} \
+		-fno-sanitize-recover=signed-integer-overflow,object-size \
+		-fsanitize-undefined-trap-on-error} \
 	${check+ \
 		-fstack-check} \
 	${ssp+ \
