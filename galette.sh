@@ -53,6 +53,7 @@ fi
 link=1
 warn=1
 fortify=1
+sanitise=1
 check=1
 ssp=1
 pic=1
@@ -73,6 +74,8 @@ do
 		unset warn;;
 	(-[DU]_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*)
 		unset fortify;;
+	(-fsanitize=*|-fsanitize-*|-fno-sanitize=*|-fno-sanitize-*)
+		unset sanitise;;
 	(-fstack-check|-fstack-check=*)
 		unset check;;
 	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
@@ -82,7 +85,7 @@ do
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
 		unset pie;;
 	(-ffreestanding|-fno-hosted|-nodefaultlibs|-nostdlib)
-		unset libgcc;;
+		unset sanitise libgcc;;
 	(-lgcc)
 		libgcc=1;;
 	(-Wl,-z,combreloc|-Wl,-z,nocombreloc)
@@ -117,6 +120,9 @@ exec "$binp" \
 		-Werror=sequence-point} \
 	${fortify+ \
 		-D_FORTIFY_SOURCE=2 -O} \
+	${sanitise+ \
+		-fsanitize=signed-integer-overflow,object-size \
+		-fno-sanitize-recover=signed-integer-overflow,object-size} \
 	${check+ \
 		-fstack-check} \
 	${ssp+ \
