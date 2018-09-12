@@ -85,7 +85,6 @@ arch="${target%-*-*-*}"
 link=
 
 # Default flags
-format_security=
 check_undefined=
 fortify=
 instrument=
