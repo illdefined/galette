@@ -75,20 +75,31 @@ then
 	printf "compiler='%s';target='%s'" "${compiler//\'/\'\'}" "${target//\'/\'\'}" >"$binpc"
 fi
 
+case "$compiler" in
+(clang|gcc)
+	eval $compiler=;;
+esac
+
+link=
+
 # Default flags
-link=1
-warn=1
-fortify=1
-sanitise=1
-check=1
-ssp=1
-pic=1
-pie=1
-libgcc=1
-combreloc=1
-relro=1
-now=1
-hashstyle=1
+format_security=
+check_undefined=
+fortify=
+instrument=
+instrument_undefined=
+signed_overflow=
+object_size=
+stack_clash=
+ssp=
+pic=
+pie=
+libgcc=
+lto=
+combreloc=
+relro=
+now=
+hashstyle=
 
 # Retrieve flags from environment
 comp=""
@@ -100,15 +111,15 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-		(fortify|pic|pie)
-			var="${comp#[+-]}"
-			var="${var//-/_}"
-			if [ "${comp%${var}}" = "-" ]
-			then
-				unset $var
-			else
-				eval $var=
-			fi;;
+	(format-security|check-undefined|fortify|instrument|instrument-undefined|signed-overflow|object-size|stack-clash|ssp|pic|pie|lto|relro|now|hashstyle)
+		var="${comp#[+-]}"
+		var="${var//-/_}"
+		if [ "${comp%${var}}" = "-" ]
+		then
+			unset $var
+		else
+			eval $var=
+		fi;;
 	esac
 done
 
@@ -118,14 +129,16 @@ do
 	case "$arg" in
 	(-c)
 		unset link;;
-	(-Werror)
-		unset warn;;
 	(-[DU]_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*)
 		unset fortify;;
-	(-fsanitize=*|-fsanitize-*|-fno-sanitize=*|-fno-sanitize-*)
-		unset sanitise;;
-	(-fstack-check|-fstack-check=*)
-		unset check;;
+	(-fno-sanitize=all)
+		unset instrument;;
+	(-fsanitize=undefined|-fno-sanitize=undefined)
+		unset instrument_undefined;;
+	(-fsanitize=signed-integer-overflow|-fno-sanitize=signed-integer-overflow)
+		unset signed_overflow;;
+	(-fsanitize=object-size|-fno-sanitize=object-size)
+		unset object_size;;
 	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
 		unset ssp;;
 	(-fPI[CE]|-fpi[ce]|-fno-PIC|-fno-pic|-rdynamic|-static|-Bstatic|-[ir]|-Wl,-pie|-pie)
@@ -155,40 +168,31 @@ done
 # Certain functions may require libgcc
 [ -z "${libgcc+x}" ] && unset fortify ssp wrap
 
+# Instrumentation dependencies
+[ -z "${instrument+x}" ] && unset instrument_undefined
+[ -z "${instrument_undefined+x}" ] && unset signed_overflow object_size
+
+# clang does not yet support stack clash protection
+[ "$compiler" = "clang" ] && unset stack_clash
+
 # Launch the compiler binary
 exec "$binp" \
-	${warn+ \
-		-Wformat \
-		-Wformat-security \
-		-Werror=format-security \
-		-Wuninitialized \
-		-Winit-self \
-		-Werror=init-self \
-		-Wsequence-point \
-		-Werror=sequence-point} \
-	${fortify+ \
-		-D_FORTIFY_SOURCE=2 -O} \
-	${sanitise+ \
-		-fsanitize=signed-integer-overflow,object-size \
-		-fno-sanitize-recover=signed-integer-overflow,object-size \
-		-fsanitize-undefined-trap-on-error} \
-	${check+ \
-		-fstack-check} \
-	${ssp+ \
-		-fstack-protector-strong} \
-	${pic+ \
-		-fPIC} \
-	${pie+ \
-		-fPIE} \
+	${format_security+-Wformat -Werror=format-security} \
+	${check_undefined+-Werror=init-self -Werror=sequence-point} \
+	${fortify+-D_FORTIFY_SOURCE=2 -O} \
+	${instrument_undefined+-fsanitize-undefined-trap-on-error \
+		${signed_overflow+-fsanitize=signed-integer-overflow -fno-sanitize-recover=signed-integer-overflow} \
+		${object_size+-fsanitize=object-size -fno-sanitize-recover=object-size}} \
+	${stack_clash+-fstack-clash-protection} \
+	${ssp+-fstack-protector-strong} \
+	${pic+-fPIC} \
+	${pie+-fPIE} \
+	${lto+-flto \
+		${gcc+-fuse-linker-plugin}} \
 	${link+ \
-		${pie+ \
-			-pie} \
-		${combreloc+ \
-			-Wl,-z,combreloc} \
-		${relro+ \
-			-Wl,-z,relro} \
-		${now+ \
-			-Wl,-z,now} \
-		${hashstyle+ \
-			-Wl,--hash-style=gnu}} \
+		${pie+-pie} \
+		${combreloc+-Wl,-z,combreloc} \
+		${relro+-Wl,-z,relro} \
+		${now+-Wl,-z,now} \
+		${hashstyle+-Wl,--hash-style=gnu}} \
 	"$@"
