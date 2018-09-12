@@ -80,6 +80,8 @@ case "$compiler" in
 	eval $compiler=;;
 esac
 
+arch="${target%-*-*-*}"
+
 link=
 
 # Default flags
@@ -111,7 +113,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|check-undefined|fortify|instrument|instrument-undefined|signed-overflow|object-size|stack-clash|ssp|pic|pie|lto|relro|now|hashstyle)
+	(format-security|check-undefined|fortify|instrument|instrument-undefined|signed-overflow|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -139,6 +141,10 @@ do
 		unset signed_overflow;;
 	(-fsanitize=object-size|-fno-sanitize=object-size)
 		unset object_size;;
+	(-fsanitize=shadow-call-stack|-fno-sanitize=shadow-call-stack)
+		unset shadow_stack;;
+	(-fsanitize=safe-stack|-fno-sanitize=safe-stack)
+		unset safe_stack;;
 	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
 		unset ssp;;
 	(-fPI[CE]|-fpi[ce]|-fno-PIC|-fno-pic|-rdynamic|-static|-Bstatic|-[ir]|-Wl,-pie|-pie)
@@ -169,8 +175,14 @@ done
 [ -z "${libgcc+x}" ] && unset fortify ssp wrap
 
 # Instrumentation dependencies
-[ -z "${instrument+x}" ] && unset instrument_undefined
+[ -z "${instrument+x}" ] && unset instrument_undefined shadow_stack safe_stack
 [ -z "${instrument_undefined+x}" ] && unset signed_overflow object_size
+
+# Stack protection dependencies
+[ "$compiler" != "clang" ] && unset shadow_stack safe_stack
+[ "$arch" != "x86_64" ] && unset shadow_stack
+[ -n "${shadow_stack+x}" ] && unset safe_stack ssp
+[ -n "${safe_stack+x}" ] && unset ssp
 
 # clang does not yet support stack clash protection
 [ "$compiler" = "clang" ] && unset stack_clash
@@ -183,6 +195,8 @@ exec "$binp" \
 	${instrument_undefined+-fsanitize-undefined-trap-on-error \
 		${signed_overflow+-fsanitize=signed-integer-overflow -fno-sanitize-recover=signed-integer-overflow} \
 		${object_size+-fsanitize=object-size -fno-sanitize-recover=object-size}} \
+	${shadow_stack+-fsanitize=shadow-call-stack} \
+	${safe_stack+-fsanitize=safe-stack} \
 	${stack_clash+-fstack-clash-protection} \
 	${ssp+-fstack-protector-strong} \
 	${pic+-fPIC} \
