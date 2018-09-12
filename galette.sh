@@ -112,7 +112,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|check-undefined|fortify|instrument|instrument-undefined|signed-overflow|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|relro|now|hashstyle)
+	(format-security|check-undefined|fortify|instrument|instrument-undefined|signed-overflow|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|fat-lto|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -154,6 +154,10 @@ do
 		unset libgcc;;
 	(-lgcc)
 		libgcc=1;;
+	(-flto|-fno-lto)
+		unset lto;;
+	(-ffat-lto-objects|-fno-fat-lto-objects)
+		unset fat_lto;;
 	(-Wl,-z,combreloc|-Wl,-z,nocombreloc)
 		unset combreloc;;
 	(-Wl,-z,relro|-Wl,-z,norelro)
@@ -183,8 +187,8 @@ done
 [ -n "${shadow_stack+x}" ] && unset safe_stack ssp
 [ -n "${safe_stack+x}" ] && unset ssp
 
-# clang does not yet support stack clash protection
-[ "$compiler" = "clang" ] && unset stack_clash
+# Missing support in clang
+[ "$compiler" = "clang" ] && unset stack_clash fat_lto
 
 # Launch the compiler binary
 exec "$binp" \
@@ -201,7 +205,8 @@ exec "$binp" \
 	${pic+-fPIC} \
 	${pie+-fPIE} \
 	${lto+-flto \
-		${gcc+-fuse-linker-plugin}} \
+		${gcc+-fuse-linker-plugin} \
+		${fat_lto+-ffat-lto-objects}} \
 	${link+ \
 		${pie+-pie} \
 		${combreloc+-Wl,-z,combreloc} \
