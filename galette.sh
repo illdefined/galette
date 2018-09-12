@@ -89,6 +89,7 @@ check_undefined=
 fortify=
 instrument=
 instrument_undefined=
+vla_bound=
 signed_overflow=
 object_size=
 stack_clash=
@@ -112,7 +113,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|check-undefined|fortify|instrument|instrument-undefined|signed-overflow|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|fat-lto|relro|now|hashstyle)
+	(format-security|check-undefined|fortify|instrument|instrument-undefined|vla-bound|signed-overflow|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|fat-lto|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -136,6 +137,8 @@ do
 		unset instrument;;
 	(-fsanitize=undefined|-fno-sanitize=undefined)
 		unset instrument_undefined;;
+	(-fsanitize=vla-bound|-fno-sanitize=vla-bound)
+		unset vla_bound;;
 	(-fsanitize=signed-integer-overflow|-fno-sanitize=signed-integer-overflow)
 		unset signed_overflow;;
 	(-fsanitize=object-size|-fno-sanitize=object-size)
@@ -179,7 +182,7 @@ done
 
 # Instrumentation dependencies
 [ -z "${instrument+x}" ] && unset instrument_undefined shadow_stack safe_stack
-[ -z "${instrument_undefined+x}" ] && unset signed_overflow object_size
+[ -z "${instrument_undefined+x}" ] && unset vla_bound signed_overflow object_size
 
 # Stack protection dependencies
 [ "$compiler" != "clang" ] && unset shadow_stack safe_stack
@@ -196,6 +199,7 @@ exec "$binp" \
 	${check_undefined+-Werror=init-self -Werror=sequence-point} \
 	${fortify+-D_FORTIFY_SOURCE=2 -O} \
 	${instrument_undefined+-fsanitize-undefined-trap-on-error \
+		${vla_bound+-fsanitize=vla-bound -fno-sanitize-recover=vla-bound} \
 		${signed_overflow+-fsanitize=signed-integer-overflow -fno-sanitize-recover=signed-integer-overflow} \
 		${object_size+-fsanitize=object-size -fno-sanitize-recover=object-size}} \
 	${shadow_stack+-fsanitize=shadow-call-stack} \
