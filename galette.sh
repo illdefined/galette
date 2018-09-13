@@ -97,6 +97,7 @@ ssp=
 pic=
 pie=
 libgcc=
+libubsan=
 lto=
 combreloc=
 relro=
@@ -154,9 +155,11 @@ do
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
 		unset pie;;
 	(-ffreestanding|-fno-hosted|-nodefaultlibs|-nostdlib)
-		unset libgcc;;
+		unset libgcc libubsan;;
 	(-lgcc)
 		libgcc=1;;
+	(-lubsan)
+		libubsan=1;;
 	(-flto|-fno-lto)
 		unset lto;;
 	(-ffat-lto-objects|-fno-fat-lto-objects)
@@ -198,7 +201,8 @@ exec "$binp" \
 	${format_security+-Wformat -Werror=format-security} \
 	${check_undefined+-Werror=init-self -Werror=sequence-point} \
 	${fortify+-D_FORTIFY_SOURCE=2 -O} \
-	${instrument_undefined+-fsanitize-undefined-trap-on-error \
+	${instrument_undefined+
+		${libubsan--fsanitize-undefined-trap-on-error} \
 		${vla_bound+-fsanitize=vla-bound -fno-sanitize-recover=vla-bound} \
 		${signed_overflow+-fsanitize=signed-integer-overflow -fno-sanitize-recover=signed-integer-overflow} \
 		${object_size+-fsanitize=object-size -fno-sanitize-recover=object-size}} \
