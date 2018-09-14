@@ -91,6 +91,7 @@ instrument=
 instrument_undefined=
 vla_bound=
 signed_overflow=
+array_bounds=
 object_size=
 stack_clash=
 ssp=
@@ -114,7 +115,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|check-undefined|fortify|instrument|instrument-undefined|vla-bound|signed-overflow|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|fat-lto|relro|now|hashstyle)
+	(format-security|check-undefined|fortify|instrument|instrument-undefined|vla-bound|signed-overflow|array-bounds|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|fat-lto|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -142,6 +143,8 @@ do
 		unset vla_bound;;
 	(-fsanitize=signed-integer-overflow|-fno-sanitize=signed-integer-overflow)
 		unset signed_overflow;;
+	(-fsanitize=bounds|-fno-sanitize=bounds)
+		unset array_bounds;;
 	(-fsanitize=object-size|-fno-sanitize=object-size)
 		unset object_size;;
 	(-fsanitize=shadow-call-stack|-fno-sanitize=shadow-call-stack)
@@ -205,6 +208,7 @@ exec "$binp" \
 		${libubsan--fsanitize-undefined-trap-on-error} \
 		${vla_bound+-fsanitize=vla-bound -fno-sanitize-recover=vla-bound} \
 		${signed_overflow+-fsanitize=signed-integer-overflow -fno-sanitize-recover=signed-integer-overflow} \
+		${array_bounds+-fsanitize=bounds -fno-sanitize-recover=bounds} \
 		${object_size+-fsanitize=object-size -fno-sanitize-recover=object-size}} \
 	${shadow_stack+-fsanitize=shadow-call-stack} \
 	${safe_stack+-fsanitize=safe-stack} \
