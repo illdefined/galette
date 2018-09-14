@@ -205,6 +205,7 @@ exec "$binp" \
 	${check_undefined+-Werror=init-self -Werror=sequence-point} \
 	${fortify+-D_FORTIFY_SOURCE=2 -O} \
 	${instrument_undefined+
+		${clang+-fsanitize-minimal-runtime} \
 		${libubsan--fsanitize-undefined-trap-on-error} \
 		${vla_bound+-fsanitize=vla-bound -fno-sanitize-recover=vla-bound} \
 		${signed_overflow+-fsanitize=signed-integer-overflow -fno-sanitize-recover=signed-integer-overflow} \
