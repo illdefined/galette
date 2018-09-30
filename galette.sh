@@ -117,12 +117,12 @@ do
 	case "${comp#[+-]}" in
 	(format-security|check-undefined|fortify|instrument|instrument-undefined|vla-bound|signed-overflow|array-bounds|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|fat-lto|relro|now|hashstyle)
 		var="${comp#[+-]}"
-		var="${var//-/_}"
+		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
 		then
-			unset $var
+			unset $var_
 		else
-			eval $var=
+			eval $var_=
 		fi;;
 	esac
 done
