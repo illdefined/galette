@@ -90,7 +90,6 @@ fortify=
 instrument=
 instrument_undefined=
 vla_bound=
-signed_overflow=
 array_bounds=
 object_size=
 stack_clash=
