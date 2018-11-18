@@ -114,7 +114,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|check-undefined|fortify|instrument|instrument-undefined|vla-bound|signed-overflow|array-bounds|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|fat-lto|relro|now|hashstyle)
+	(format-security|check-undefined|cxx-bounds|fortify|instrument|instrument-undefined|vla-bound|signed-overflow|array-bounds|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|fat-lto|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -132,6 +132,8 @@ do
 	case "$arg" in
 	(-c)
 		unset link;;
+	(-[DU]_GLIBCXX_ASSERTIONS)
+		unset cxx_bounds;;
 	(-[DU]_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*)
 		unset fortify;;
 	(-fno-sanitize=all)
@@ -202,8 +204,9 @@ done
 exec "$binp" \
 	${format_security+-Wformat -Werror=format-security} \
 	${check_undefined+-Werror=init-self -Werror=sequence-point} \
+	${cxx_bounds+-D_GLIBCXX_ASSERTIONS} \
 	${fortify+-D_FORTIFY_SOURCE=2 -O} \
-	${instrument_undefined+
+	${instrument_undefined+ \
 		${clang+-fsanitize-minimal-runtime} \
 		${libubsan--fsanitize-undefined-trap-on-error} \
 		${vla_bound+-fsanitize=vla-bound -fno-sanitize-recover=vla-bound} \
