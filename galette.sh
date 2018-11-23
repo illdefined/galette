@@ -85,7 +85,6 @@ arch="${target%-*-*-*}"
 link=
 
 # Default flags
-check_undefined=
 fortify=
 instrument=
 instrument_undefined=
@@ -114,7 +113,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|check-undefined|cxx-bounds|fortify|instrument|instrument-undefined|vla-bound|signed-overflow|array-bounds|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|fat-lto|relro|now|hashstyle)
+	(format-security|cxx-bounds|fortify|instrument|instrument-undefined|vla-bound|signed-overflow|array-bounds|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|fat-lto|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -206,7 +205,6 @@ done
 # Launch the compiler binary
 exec "$binp" \
 	${format_security+-Wformat -Werror=format-security} \
-	${check_undefined+-Werror=init-self -Werror=sequence-point} \
 	${cxx_bounds+-D_GLIBCXX_ASSERTIONS} \
 	${fortify+-D_FORTIFY_SOURCE=2 -O} \
 	${instrument_undefined+ \
