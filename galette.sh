@@ -164,7 +164,7 @@ do
 		libgcc=1;;
 	(-lubsan)
 		libubsan=1;;
-	(-flto|-fno-lto)
+	(-flto|-flto=*|-fno-lto)
 		unset lto;;
 	(-ffat-lto-objects|-fno-fat-lto-objects)
 		unset fat_lto;;
@@ -200,6 +200,9 @@ done
 # Missing support in clang
 [ "$compiler" = "clang" ] && unset stack_clash fat_lto
 
+# Determine number of parallel LTO jobs
+[ -n "${lto+x}" ] && nproc="$(nproc)"
+
 # Launch the compiler binary
 exec "$binp" \
 	${format_security+-Wformat -Werror=format-security} \
@@ -219,7 +222,7 @@ exec "$binp" \
 	${ssp+-fstack-protector-strong} \
 	${pic+-fPIC} \
 	${pie+-fPIE} \
-	${lto+-flto \
+	${lto+-flto"${nproc:+=${nproc}}" \
 		${gcc+-fuse-linker-plugin} \
 		${fat_lto+-ffat-lto-objects}} \
 	${link+ \
