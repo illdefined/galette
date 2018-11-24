@@ -113,7 +113,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|cxx-bounds|fortify|instrument|instrument-undefined|vla-bound|signed-overflow|array-bounds|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|fat-lto|relro|now|hashstyle)
+	(format-security|cxx-bounds|fortify|instrument|instrument-undefined|vla-bound|signed-overflow|array-bounds|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|fat-lto|combreloc|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
