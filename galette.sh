@@ -200,7 +200,7 @@ done
 [ "$compiler" = "clang" ] && unset stack_clash fat_lto
 
 # Determine number of parallel LTO jobs
-[ -n "${lto+x}" ] && nproc="$(nproc)"
+[ -n "${lto+x}" -a "$compiler" = "gcc" ] && nproc="$(nproc)"
 
 # Launch the compiler binary
 exec "$binp" \
