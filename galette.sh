@@ -203,7 +203,7 @@ done
 [ -n "${lto+x}" -a "$compiler" = "gcc" ] && nproc="$(nproc)"
 
 # Launch the compiler binary
-exec "$binp" \
+exec -a "$bin" "$binp" \
 	${format_security+-Wformat -Werror=format-security} \
 	${cxx_bounds+-D_GLIBCXX_ASSERTIONS} \
 	${fortify+-D_FORTIFY_SOURCE=2 -O} \
