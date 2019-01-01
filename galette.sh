@@ -93,6 +93,7 @@ array_bounds=
 object_size=
 stack_clash=
 ssp=
+signed_overflow=
 pic=
 pie=
 libgcc=
@@ -113,7 +114,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|cxx-bounds|fortify|instrument|instrument-undefined|vla-bound|signed-overflow|array-bounds|object-size|shadow-stack|safe-stack|stack-clash|ssp|pic|pie|lto|fat-lto|combreloc|relro|now|hashstyle)
+	(format-security|cxx-bounds|fortify|instrument|instrument-undefined|vla-bound|array-bounds|object-size|shadow-stack|safe-stack|stack-clash|signed-overflow|ssp|pic|pie|lto|fat-lto|combreloc|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -141,8 +142,6 @@ do
 		unset instrument_undefined;;
 	(-fsanitize=vla-bound|-fno-sanitize=vla-bound)
 		unset vla_bound;;
-	(-fsanitize=signed-integer-overflow|-fno-sanitize=signed-integer-overflow)
-		unset signed_overflow;;
 	(-fsanitize=bounds|-fno-sanitize=bounds)
 		unset array_bounds;;
 	(-fsanitize=object-size|-fno-sanitize=object-size)
@@ -151,6 +150,8 @@ do
 		unset shadow_stack;;
 	(-fsanitize=safe-stack|-fno-sanitize=safe-stack)
 		unset safe_stack;;
+	(-fstrict-overflow|-fno-strict-overflow|-fwrapv|-fno-wrapv|-fwrapv-pointer|-fno-wrapv-pointer)
+		unset signed_overflow;;
 	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
 		unset ssp;;
 	(-fPI[CE]|-fpi[ce]|-fno-PIC|-fno-pic|-static|-Bstatic|-Wl,-pie|-pie)
@@ -188,7 +189,7 @@ done
 
 # Instrumentation dependencies
 [ -z "${instrument+x}" ] && unset instrument_undefined shadow_stack safe_stack
-[ -z "${instrument_undefined+x}" ] && unset vla_bound signed_overflow object_size
+[ -z "${instrument_undefined+x}" ] && unset vla_bound object_size
 
 # Stack protection dependencies
 [ "$compiler" != "clang" ] && unset shadow_stack safe_stack
@@ -211,13 +212,13 @@ exec -a "$bin" "$binp" \
 		${clang+-fsanitize-minimal-runtime} \
 		${libubsan--fsanitize-undefined-trap-on-error} \
 		${vla_bound+-fsanitize=vla-bound -fno-sanitize-recover=vla-bound} \
-		${signed_overflow+-fsanitize=signed-integer-overflow -fno-sanitize-recover=signed-integer-overflow} \
 		${array_bounds+-fsanitize=bounds -fno-sanitize-recover=bounds} \
 		${object_size+-fsanitize=object-size -fno-sanitize-recover=object-size}} \
 	${shadow_stack+-fsanitize=shadow-call-stack} \
 	${safe_stack+-fsanitize=safe-stack} \
 	${stack_clash+-fstack-clash-protection} \
 	${ssp+-fstack-protector-strong} \
+	${signed_overflow+-fno-strict-overflow} \
 	${pic+-fPIC} \
 	${pie+-fPIE} \
 	${lto+-flto"${nproc:+=${nproc}}" \
