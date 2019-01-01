@@ -94,6 +94,7 @@ object_size=
 stack_clash=
 ssp=
 signed_overflow=
+exceptions=
 pic=
 pie=
 libgcc=
@@ -114,7 +115,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|cxx-bounds|fortify|instrument|instrument-undefined|vla-bound|array-bounds|object-size|shadow-stack|safe-stack|stack-clash|signed-overflow|ssp|pic|pie|lto|fat-lto|combreloc|relro|now|hashstyle)
+	(format-security|cxx-bounds|fortify|instrument|instrument-undefined|vla-bound|array-bounds|object-size|shadow-stack|safe-stack|stack-clash|ssp|signed-overflow|exceptions|pic|pie|lto|fat-lto|combreloc|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -136,6 +137,8 @@ do
 		unset cxx_bounds;;
 	(-[DU]_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*)
 		unset fortify;;
+	(-pthread|-lpthread)
+		pthread=;;
 	(-fno-sanitize=all)
 		unset instrument;;
 	(-fsanitize=undefined|-fno-sanitize=undefined)
@@ -152,6 +155,8 @@ do
 		unset safe_stack;;
 	(-fstrict-overflow|-fno-strict-overflow|-fwrapv|-fno-wrapv|-fwrapv-pointer|-fno-wrapv-pointer)
 		unset signed_overflow;;
+	(-fexceptions|-fno-exceptions)
+		unset exceptions;;
 	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
 		unset ssp;;
 	(-fPI[CE]|-fpi[ce]|-fno-PIC|-fno-pic|-static|-Bstatic|-Wl,-pie|-pie)
@@ -180,6 +185,9 @@ do
 		break;;
 	esac
 done
+
+# No thread cancellation hardening for single-threaded programmes
+[ -n "${pthread+x}" ] && unset exceptions
 
 # No PIC if PIE
 [ -n "${pie+x}" ] && unset pic
@@ -219,6 +227,7 @@ exec -a "$bin" "$binp" \
 	${stack_clash+-fstack-clash-protection} \
 	${ssp+-fstack-protector-strong} \
 	${signed_overflow+-fno-strict-overflow} \
+	${exceptions+-fexceptions} \
 	${pic+-fPIC} \
 	${pie+-fPIE} \
 	${lto+-flto"${nproc:+=${nproc}}" \
