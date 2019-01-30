@@ -86,11 +86,6 @@ link=
 
 # Default flags
 fortify=
-instrument=
-instrument_undefined=
-vla_bound=
-array_bounds=
-object_size=
 stack_clash=
 ssp=
 signed_overflow=
@@ -115,7 +110,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|cxx-bounds|fortify|instrument|instrument-undefined|vla-bound|array-bounds|object-size|shadow-stack|safe-stack|stack-clash|ssp|signed-overflow|exceptions|pic|pie|lto|fat-lto|combreloc|relro|now|hashstyle)
+	(format-security|cxx-bounds|fortify|safe-stack|stack-clash|ssp|signed-overflow|exceptions|pic|pie|lto|fat-lto|combreloc|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -139,20 +134,6 @@ do
 		unset fortify;;
 	(-pthread|-lpthread)
 		pthread=;;
-	(-fno-sanitize=all)
-		unset instrument;;
-	(-fsanitize=undefined|-fno-sanitize=undefined)
-		unset instrument_undefined;;
-	(-fsanitize=vla-bound|-fno-sanitize=vla-bound)
-		unset vla_bound;;
-	(-fsanitize=bounds|-fno-sanitize=bounds)
-		unset array_bounds;;
-	(-fsanitize=object-size|-fno-sanitize=object-size)
-		unset object_size;;
-	(-fsanitize=shadow-call-stack|-fno-sanitize=shadow-call-stack)
-		unset shadow_stack;;
-	(-fsanitize=safe-stack|-fno-sanitize=safe-stack)
-		unset safe_stack;;
 	(-fstrict-overflow|-fno-strict-overflow|-fwrapv|-fno-wrapv|-fwrapv-pointer|-fno-wrapv-pointer)
 		unset signed_overflow;;
 	(-fexceptions|-fno-exceptions)
@@ -164,11 +145,9 @@ do
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
 		unset pie;;
 	(-ffreestanding|-fno-hosted|-nodefaultlibs|-nostdlib)
-		unset libgcc libubsan;;
+		unset libgcc;;
 	(-lgcc)
 		libgcc=1;;
-	(-lubsan)
-		libubsan=1;;
 	(-flto|-flto=*|-fno-lto)
 		unset lto;;
 	(-ffat-lto-objects|-fno-fat-lto-objects)
@@ -195,16 +174,6 @@ done
 # Certain functions may require libgcc
 [ -z "${libgcc+x}" ] && unset fortify ssp wrap
 
-# Instrumentation dependencies
-[ -z "${instrument+x}" ] && unset instrument_undefined shadow_stack safe_stack
-[ -z "${instrument_undefined+x}" ] && unset vla_bound object_size
-
-# Stack protection dependencies
-[ "$compiler" != "clang" ] && unset shadow_stack safe_stack
-[ "$arch" != "x86_64" ] && unset shadow_stack
-[ -n "${shadow_stack+x}" ] && unset safe_stack ssp
-[ -n "${safe_stack+x}" ] && unset ssp
-
 # Missing support in clang
 [ "$compiler" = "clang" ] && unset stack_clash fat_lto
 
@@ -216,14 +185,6 @@ exec -a "$bin" "$binp" \
 	${format_security+-Wformat -Werror=format-security} \
 	${cxx_bounds+-D_GLIBCXX_ASSERTIONS} \
 	${fortify+-D_FORTIFY_SOURCE=2 -O} \
-	${instrument_undefined+ \
-		${clang+-fsanitize-minimal-runtime} \
-		${libubsan--fsanitize-undefined-trap-on-error} \
-		${vla_bound+-fsanitize=vla-bound -fno-sanitize-recover=vla-bound} \
-		${array_bounds+-fsanitize=bounds -fno-sanitize-recover=bounds} \
-		${object_size+-fsanitize=object-size -fno-sanitize-recover=object-size}} \
-	${shadow_stack+-fsanitize=shadow-call-stack} \
-	${safe_stack+-fsanitize=safe-stack} \
 	${stack_clash+-fstack-clash-protection} \
 	${ssp+-fstack-protector-strong} \
 	${signed_overflow+-fno-strict-overflow} \
