@@ -69,7 +69,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|pic|pie|lto|combreloc|relro|now|hashstyle)
+	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|pic|pie|slh|lto|combreloc|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -103,6 +103,8 @@ do
 		unset pic pie;;
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
 		unset pie;;
+	(-mspeculative-load-hardening|-mno-speculative-load-hardening)
+		unset slh;;
 	(-ffreestanding|-fno-hosted|-nodefaultlibs|-nostdlib)
 		unset libgcc;;
 	(-lgcc)
@@ -142,6 +144,7 @@ exec -a "$bin" "$binp" \
 	${exceptions+-fexceptions} \
 	${pic+-fPIC} \
 	${pie+-fPIE} \
+	${slh+-mspeculative-load-hardening} \
 	${lto+-flto=thin} \
 	${link+ \
 		${pie+-pie} \
