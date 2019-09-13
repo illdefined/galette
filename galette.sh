@@ -54,6 +54,7 @@ pie=
 libgcc=
 libubsan=
 lto=
+visibility=
 combreloc=
 relro=
 now=
@@ -69,7 +70,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|pic|pie|slh|lto|combreloc|relro|now|hashstyle)
+	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|pic|pie|slh|cfi|lto|combreloc|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -111,6 +112,10 @@ do
 		libgcc=1;;
 	(-flto|-flto=*|-fno-lto)
 		unset lto;;
+	(-fsanitize=cfi|-fsanitize=cfi-*|-fno-sanitize=cfi|-fno-sanitize=cfi-*)
+		unset cfi;;
+	(-fvisibility=*)
+		unset visibility;;
 	(-Wl,-z,combreloc|-Wl,-z,nocombreloc)
 		unset combreloc;;
 	(-Wl,-z,relro|-Wl,-z,norelro)
@@ -133,6 +138,10 @@ done
 # Certain functions may require libgcc
 [ -z "${libgcc+x}" ] && unset fortify ssp wrap
 
+# CFI requires LTO and explicit visibility
+[ -z "${lto+x}" ] && unset cfi
+[ -z "${cfi+x}" ] && unset visibility
+
 # Launch the compiler binary
 exec -a "$bin" "$binp" \
 	${format_security+-Wformat -Werror=format-security} \
@@ -146,6 +155,8 @@ exec -a "$bin" "$binp" \
 	${pie+-fPIE} \
 	${slh+-mspeculative-load-hardening} \
 	${lto+-flto=thin} \
+	${cfi+-fsanitize=cfi} \
+	${visibility+-fvisibility=default} \
 	${link+ \
 		${pie+-pie} \
 		${combreloc+-Wl,-z,combreloc} \
