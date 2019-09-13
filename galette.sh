@@ -55,6 +55,7 @@ libgcc=
 libubsan=
 lto=
 visibility=
+auto_init=
 combreloc=
 relro=
 now=
@@ -70,7 +71,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|pic|pie|slh|cfi|lto|combreloc|relro|now|hashstyle)
+	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|pic|pie|slh|cfi|lto|auto-init|combreloc|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -116,6 +117,8 @@ do
 		unset cfi;;
 	(-fvisibility=*)
 		unset visibility;;
+	(-ftrivial-auto-var-init=*)
+		unset auto_init;;
 	(-Wl,-z,combreloc|-Wl,-z,nocombreloc)
 		unset combreloc;;
 	(-Wl,-z,relro|-Wl,-z,norelro)
@@ -157,6 +160,7 @@ exec -a "$bin" "$binp" \
 	${lto+-flto=thin} \
 	${cfi+-fsanitize=cfi} \
 	${visibility+-fvisibility=default} \
+	${auto_init+-ftrivial-auto-var-init=zero -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang} \
 	${link+ \
 		${pie+-pie} \
 		${combreloc+-Wl,-z,combreloc} \
