@@ -51,8 +51,6 @@ signed_overflow=
 exceptions=
 pic=
 pie=
-libgcc=
-libubsan=
 lto=
 visibility=
 auto_init=
@@ -108,9 +106,7 @@ do
 	(-mspeculative-load-hardening|-mno-speculative-load-hardening)
 		unset slh;;
 	(-ffreestanding|-fno-hosted|-nodefaultlibs|-nostdlib)
-		unset libgcc;;
-	(-lgcc)
-		libgcc=1;;
+		unset fortify ssp;;
 	(-flto|-flto=*|-fno-lto)
 		unset lto;;
 	(-fsanitize=cfi|-fsanitize=cfi-*|-fno-sanitize=cfi|-fno-sanitize=cfi-*)
@@ -137,9 +133,6 @@ done
 
 # No PIC if PIE
 [ -n "${pie+x}" ] && unset pic
-
-# Certain functions may require libgcc
-[ -z "${libgcc+x}" ] && unset fortify ssp wrap
 
 # CFI requires LTO and explicit visibility
 [ -z "${lto+x}" ] && unset cfi
