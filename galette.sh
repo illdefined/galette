@@ -52,6 +52,7 @@ exceptions=
 pic=
 pie=
 lto=
+polly=
 visibility=
 auto_init=
 combreloc=
@@ -69,7 +70,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|pic|pie|slh|cfi|lto|auto-init|combreloc|relro|now|hashstyle)
+	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|pic|pie|slh|cfi|lto|polly|auto-init|combreloc|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -91,6 +92,8 @@ do
 		unset cxx_bounds;;
 	(-[DU]_FORTIFY_SOURCE|-D_FORTIFY_SOURCE=*)
 		unset fortify;;
+	(-O[0sz])
+		unset polly;;
 	(-pthread|-lpthread)
 		pthread=;;
 	(-fstrict-overflow|-fno-strict-overflow|-fwrapv|-fno-wrapv|-fwrapv-pointer|-fno-wrapv-pointer)
@@ -151,6 +154,7 @@ exec -a "$bin" "$binp" \
 	${pie+-fPIE} \
 	${slh+-mspeculative-load-hardening} \
 	${lto+-flto=thin} \
+	${polly+-O -mllvm -polly -mllvm -polly-vectorizer=stripmine} \
 	${cfi+-fsanitize=cfi} \
 	${visibility+-fvisibility=default} \
 	${auto_init+-ftrivial-auto-var-init=zero -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang} \
