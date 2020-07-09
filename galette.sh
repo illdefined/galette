@@ -157,7 +157,7 @@ exec -a "$bin" "$binp" \
 	${polly+-O -mllvm -polly -mllvm -polly-vectorizer=stripmine} \
 	${cfi+-fsanitize=cfi} \
 	${visibility+-fvisibility=default} \
-	${auto_init+-ftrivial-auto-var-init=zero -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang} \
+	${auto_init+-ftrivial-auto-var-init=pattern} \
 	${link+ \
 		${pie+-pie} \
 		${combreloc+-Wl,-z,combreloc} \
