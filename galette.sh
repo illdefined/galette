@@ -43,6 +43,7 @@ then
 fi
 
 link=
+runtime=
 
 # Default flags
 fortify=
@@ -101,8 +102,6 @@ do
 		unset signed_overflow;;
 	(-fexceptions|-fno-exceptions)
 		unset exceptions;;
-	(-fno-sanitize=scudo|-fno-sanitize=*,scudo,*|-fno-sanitize=*,scudo|-fno-sanitize=scudo,*)
-		unset hardend_alloc;;
 	(-fstack-protector|-fstack-protector-*|-fno-stack-protector|-fno-stack-protector-*)
 		unset ssp;;
 	(-fPI[CE]|-fpi[ce]|-fno-PIC|-fno-pic|-static|-Bstatic|-Wl,-pie|-pie)
@@ -114,7 +113,7 @@ do
 	(-mspeculative-load-hardening|-mno-speculative-load-hardening)
 		unset slh;;
 	(-ffreestanding|-fno-hosted|-nodefaultlibs|-nostdlib)
-		unset fortify ssp;;
+		unset runtime;;
 	(-flto|-flto=*|-fno-lto)
 		unset lto;;
 	(-ftrivial-auto-var-init=*)
@@ -131,6 +130,9 @@ do
 		break;;
 	esac
 done
+
+# No run‐time libraries
+[ -n "${runtime+x}" ] && unset fortify ssp hardend_alloc
 
 # No thread cancellation hardening for single-threaded programmes
 [ -n "${pthread+x}" ] && unset exceptions
