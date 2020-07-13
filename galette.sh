@@ -51,6 +51,7 @@ signed_overflow=
 exceptions=
 pic=
 pie=
+no_plt=
 lto=
 polly=
 auto_init=
@@ -69,7 +70,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|pic|pie|slh|lto|polly|auto-init|combreloc|relro|now|hashstyle)
+	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|pic|pie|no-plt|slh|lto|polly|auto-init|combreloc|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -105,6 +106,8 @@ do
 		unset pic pie;;
 	(-fno-PIE|-fno-pie|-shared|-Bshareable|-nopie)
 		unset pie;;
+	(-fplt|-fno-plt)
+		unset no_plt;;
 	(-mspeculative-load-hardening|-mno-speculative-load-hardening)
 		unset slh;;
 	(-ffreestanding|-fno-hosted|-nodefaultlibs|-nostdlib)
@@ -143,6 +146,7 @@ exec -a "$bin" "$binp" \
 	${exceptions+-fexceptions} \
 	${pic+-fPIC} \
 	${pie+-fPIE} \
+	${no_plt+-fno-plt} \
 	${slh+-mspeculative-load-hardening} \
 	${lto+-flto=thin} \
 	${polly+-O -mllvm -polly -mllvm -polly-vectorizer=stripmine} \
