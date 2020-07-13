@@ -86,7 +86,7 @@ done
 for arg in "$@"
 do
 	case "$arg" in
-	(-c)
+	(-c|-S|-E)
 		unset link;;
 	(-[DU]_GLIBCXX_ASSERTIONS)
 		unset cxx_bounds;;
