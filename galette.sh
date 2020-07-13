@@ -53,7 +53,6 @@ pic=
 pie=
 lto=
 polly=
-visibility=
 auto_init=
 combreloc=
 relro=
@@ -70,7 +69,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|pic|pie|slh|cfi|lto|polly|auto-init|combreloc|relro|now|hashstyle)
+	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|pic|pie|slh|lto|polly|auto-init|combreloc|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -112,10 +111,6 @@ do
 		unset fortify ssp;;
 	(-flto|-flto=*|-fno-lto)
 		unset lto;;
-	(-fsanitize=cfi|-fsanitize=cfi-*|-fno-sanitize=cfi|-fno-sanitize=cfi-*)
-		unset cfi;;
-	(-fvisibility=*)
-		unset visibility;;
 	(-ftrivial-auto-var-init=*)
 		unset auto_init;;
 	(-Wl,-z,combreloc|-Wl,-z,nocombreloc)
@@ -137,10 +132,6 @@ done
 # No PIC if PIE
 [ -n "${pie+x}" ] && unset pic
 
-# CFI requires LTO and explicit visibility
-[ -z "${lto+x}" ] && unset cfi
-[ -z "${cfi+x}" ] && unset visibility
-
 # Launch the compiler binary
 exec -a "$bin" "$binp" \
 	${format_security+-Wformat -Werror=format-security} \
@@ -155,8 +146,6 @@ exec -a "$bin" "$binp" \
 	${slh+-mspeculative-load-hardening} \
 	${lto+-flto=thin} \
 	${polly+-O -mllvm -polly -mllvm -polly-vectorizer=stripmine} \
-	${cfi+-fsanitize=cfi} \
-	${visibility+-fvisibility=default} \
 	${auto_init+-ftrivial-auto-var-init=pattern} \
 	${link+ \
 		${pie+-pie} \
