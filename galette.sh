@@ -161,7 +161,7 @@ exec -a "$bin" "$binp" \
 	${slh+-mspeculative-load-hardening} \
 	${lto+-flto=thin} \
 	${polly+-O -mllvm -polly -mllvm -polly-vectorizer=stripmine} \
-	${auto_init+-ftrivial-auto-var-init=pattern} \
+	${auto_init+-ftrivial-auto-var-init=zero -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang} \
 	${link+ \
 		${pie+-pie} \
 		${combreloc+-Wl,-z,combreloc} \
