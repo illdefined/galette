@@ -51,6 +51,7 @@ ssp=
 signed_overflow=
 exceptions=
 hardened_alloc=
+static_bounds=
 pic=
 pie=
 no_plt=
@@ -72,7 +73,7 @@ do
 	list="${list#* }"
 
 	case "${comp#[+-]}" in
-	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|hardened-alloc|pic|pie|no-plt|slh|lto|polly|auto-init|combreloc|relro|now|hashstyle)
+	(format-security|cxx-bounds|fortify|stack-clash|ssp|signed-overflow|exceptions|hardened-alloc|static-bounds|pic|pie|no-plt|slh|lto|polly|auto-init|combreloc|relro|now|hashstyle)
 		var="${comp#[+-]}"
 		var_="${var//-/_}"
 		if [ "${comp%${var}}" = "-" ]
@@ -150,6 +151,10 @@ exec -a "$bin" "$binp" \
 	${signed_overflow+-fno-strict-overflow} \
 	${exceptions+-fexceptions} \
 	${hardened_alloc+-fsanitize=scudo} \
+	${runtime+ \
+		${static_bounds+-fsanitize=bounds,object-size,vla-bound -fsanitize-minimal-runtime}} \
+	${runtime- \
+		${static_bounds+-fsanitize-trap=bounds,object-size,vla-bound}} \
 	${pic+-fPIC} \
 	${pie+-fPIE} \
 	${no_plt+-fno-plt} \
