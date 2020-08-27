@@ -152,9 +152,9 @@ exec -a "$bin" "$binp" \
 	${exceptions+-fexceptions} \
 	${hardened_alloc+-fsanitize=scudo} \
 	${runtime+ \
-		${static_bounds+-fsanitize=bounds,object-size,vla-bound -fsanitize-minimal-runtime}} \
+		${static_bounds+-fsanitize=bounds,vla-bound -fsanitize-minimal-runtime}} \
 	${runtime- \
-		${static_bounds+-fsanitize-trap=bounds,object-size,vla-bound}} \
+		${static_bounds+-fsanitize-trap=bounds,vla-bound}} \
 	${pic+-fPIC} \
 	${pie+-fPIE} \
 	${no_plt+-fno-plt} \
